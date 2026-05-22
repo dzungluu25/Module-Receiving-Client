@@ -12,6 +12,8 @@ public class Appointment implements Serializable{
     private Client client;
     private ArrayList<AppointmentService> appointmentService;
     private ArrayList<AppointmentMaterial> appointmentMaterial;
+    private Slot slot;
+    private TimeSlot timeSlot;
 
     public Appointment(){
         super();
@@ -28,6 +30,22 @@ public class Appointment implements Serializable{
         this.client = client;
         this.appointmentService = appointmentService;
         this.appointmentMaterial = appointmentMaterial;
+    }
+
+    public Slot getSlot() {
+        return slot;
+    }
+
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
+
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
+    }
+
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
     }
 
     public int getId() {

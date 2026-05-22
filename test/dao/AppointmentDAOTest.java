@@ -68,13 +68,9 @@ public class AppointmentDAOTest {
             Assert.assertTrue(saveResult);
 
             // Recheck status in DB
-            ArrayList<Appointment> rechecked = ad.searchAppointment(param);
-            for (Appointment r : rechecked) {
-                if (r.getId() == detailed.getId()) {
-                    Assert.assertEquals(!originalStatus, r.isStatus());
-                    break;
-                }
-            }
+            Appointment rechecked = ad.getAppointmentDetail(detailed);
+            Assert.assertNotNull(rechecked);
+            Assert.assertEquals(!originalStatus, rechecked.isStatus());
 
             // Restore original status
             detailed.setStatus(originalStatus);

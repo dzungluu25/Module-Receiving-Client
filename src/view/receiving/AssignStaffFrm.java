@@ -55,7 +55,7 @@ public class AssignStaffFrm extends JFrame implements ActionListener {
         this.u = u;
         this.a = a;
         this.serviceIndex = serviceIndex;
-        
+
         AppointmentService activeAppService = a.getAppointmentService().get(serviceIndex);
         this.service = activeAppService.getService();
 
@@ -65,45 +65,30 @@ public class AssignStaffFrm extends JFrame implements ActionListener {
 
     private void initUI() {
         JPanel pnMain = new JPanel(new BorderLayout());
-        pnMain.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         // Top Panel: Service details & step info
-        JPanel pnTop = new JPanel();
-        pnTop.setLayout(new BoxLayout(pnTop, BoxLayout.Y_AXIS));
-
-        lblTitle = new JLabel("Assign Staff to Service");
-        lblTitle.setFont(lblTitle.getFont().deriveFont(Font.BOLD, 18.0f));
-        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        pnTop.add(lblTitle);
-        pnTop.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        String serviceText = String.format("Service [%d/%d]: %s (Category: %s)", 
-            (serviceIndex + 1), 
-            (a != null && a.getAppointmentService() != null ? a.getAppointmentService().size() : 1),
-            service != null ? service.getName() : "N/A", 
-            service != null ? service.getUnit() : "N/A"
-        );
-        lblServiceInfo = new JLabel(serviceText);
-        lblServiceInfo.setFont(lblServiceInfo.getFont().deriveFont(14.0f));
-        lblServiceInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        pnTop.add(lblServiceInfo);
-        pnTop.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        pnMain.add(pnTop, BorderLayout.NORTH);
+        String serviceText = String.format("Service [%d/%d]: %s (Category: %s)",
+                (serviceIndex + 1),
+                (a != null && a.getAppointmentService() != null ? a.getAppointmentService().size() : 1),
+                service != null ? service.getName() : "N/A",
+                service != null ? service.getUnit() : "N/A");
+        lblServiceInfo = new JLabel(serviceText, JLabel.CENTER);
+        pnMain.add(lblServiceInfo, BorderLayout.NORTH);
 
         // Center Panel: Free Staff JTable
-        String[] columnNames = {"Staff ID", "Name", "Phone", "Email", "Status"};
+        String[] columnNames = { "Staff ID", "Name", "Phone", "Email", "Status" };
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
-            public boolean isCellEditable(int row, int col) { return false; }
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
         };
         tblStaff = new JTable(model);
-        tblStaff.setRowHeight(25);
         pnMain.add(new JScrollPane(tblStaff), BorderLayout.CENTER);
 
         // Bottom Panel: Control buttons
-        JPanel pnBottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        
+        JPanel pnBottom = new JPanel(new FlowLayout());
+
         btlAdd = new JButton("Assign Selected Staff");
         btlAdd.addActionListener(this);
         pnBottom.add(btlAdd);
@@ -126,7 +111,8 @@ public class AssignStaffFrm extends JFrame implements ActionListener {
     }
 
     private void loadFreeStaff() {
-        if (service == null) return;
+        if (service == null)
+            return;
         StaffDAO sd = new StaffDAO();
         listStaff = sd.searchStaff(service);
 
@@ -134,12 +120,12 @@ public class AssignStaffFrm extends JFrame implements ActionListener {
         model.setRowCount(0);
 
         for (Staff st : listStaff) {
-            model.addRow(new Object[]{
-                st.getId(),
-                st.getName(),
-                st.getPhone(),
-                st.getEmail(),
-                st.getStatus()
+            model.addRow(new Object[] {
+                    st.getId(),
+                    st.getName(),
+                    st.getPhone(),
+                    st.getEmail(),
+                    st.getStatus()
             });
         }
 
@@ -152,8 +138,7 @@ public class AssignStaffFrm extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(btlSearch)) {
             loadFreeStaff();
-        } 
-        else if (e.getSource().equals(btlAdd)) {
+        } else if (e.getSource().equals(btlAdd)) {
             int selectedRow = tblStaff.getSelectedRow();
             if (selectedRow < 0) {
                 JOptionPane.showMessageDialog(this, "Please select a staff member from the table.");
@@ -166,22 +151,22 @@ public class AssignStaffFrm extends JFrame implements ActionListener {
             // Set the assigned staff member to the active service item
             if (a != null && a.getAppointmentService() != null) {
                 a.getAppointmentService().get(serviceIndex).setStaff(selectedStaff);
-                
+
                 // If there are more services to assign, open next AssignStaffFrm
                 if (serviceIndex + 1 < a.getAppointmentService().size()) {
                     new AssignStaffFrm(u, a, serviceIndex + 1).setVisible(true);
                     this.dispose();
                 } else {
                     // Last service staff assigned $\rightarrow$ Proceed to Confirmation Screen
-                    JOptionPane.showMessageDialog(this, "All service staff assigned successfully! Proceeding to Confirmation.");
+                    JOptionPane.showMessageDialog(this,
+                            "All service staff assigned successfully! Proceeding to Confirmation.");
                     new ConfirmFrm(a).setVisible(true);
                     this.dispose();
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Selected staff: " + selectedStaff.getName());
             }
-        } 
-        else if (e.getSource().equals(btnBack)) {
+        } else if (e.getSource().equals(btnBack)) {
             if (serviceIndex > 0) {
                 // Go back to the previous service assignment
                 new AssignStaffFrm(u, a, serviceIndex - 1).setVisible(true);

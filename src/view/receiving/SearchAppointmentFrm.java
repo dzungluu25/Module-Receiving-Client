@@ -1,18 +1,12 @@
 package view.receiving;
 
 import view.user.ReceptionistHomeFrm;
-
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import dao.AppointmentDAO;
 import model.Appointment;
@@ -30,11 +23,11 @@ import model.User;
 
 public class SearchAppointmentFrm extends JFrame implements ActionListener {
     private User u;
-    private Appointment a;
     private JTable tblAppointment;
     private JButton btlSearch;
     private JTextField txtClientName;
     private JButton btnSelect;
+    private JButton btnWalkin;
     private JButton btnBack;
     private ArrayList<Appointment> listApp;
 
@@ -43,33 +36,20 @@ public class SearchAppointmentFrm extends JFrame implements ActionListener {
         this.u = u;
         this.listApp = new ArrayList<>();
 
-        // Main Layout
         JPanel pnMain = new JPanel(new BorderLayout());
-        pnMain.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Top Panel: Title & Search Fields
-        JPanel pnTop = new JPanel();
-        pnTop.setLayout(new BoxLayout(pnTop, BoxLayout.Y_AXIS));
-
-        JLabel lblTitle = new JLabel("Search Customer Appointment");
-        lblTitle.setFont(lblTitle.getFont().deriveFont(Font.BOLD, 18.0f));
-        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        pnTop.add(lblTitle);
-        pnTop.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        JPanel pnSearchField = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        pnSearchField.add(new JLabel("Customer Name:"));
-        txtClientName = new JTextField(20);
-        pnSearchField.add(txtClientName);
+        // Top Panel: Search Fields
+        JPanel pnTop = new JPanel(new FlowLayout());
+        pnTop.add(new JLabel("Customer Name:"));
+        txtClientName = new JTextField(15);
+        pnTop.add(txtClientName);
         btlSearch = new JButton("Search");
         btlSearch.addActionListener(this);
-        pnSearchField.add(btlSearch);
-        pnTop.add(pnSearchField);
-
+        pnTop.add(btlSearch);
         pnMain.add(pnTop, BorderLayout.NORTH);
 
-        // Center Panel: Table to display Appointments
-        String[] columnNames = {"Appointment ID", "Client Name", "Phone", "Scheduled Time"};
+        // Center Panel: Table
+        String[] columnNames = { "Appointment ID", "Client Name", "Phone", "Scheduled Date", "Time Slot", "Seat/Slot" };
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -77,16 +57,17 @@ public class SearchAppointmentFrm extends JFrame implements ActionListener {
             }
         };
         tblAppointment = new JTable(model);
-        tblAppointment.setRowHeight(25);
-        JScrollPane scrollPane = new JScrollPane(tblAppointment);
-        pnMain.add(scrollPane, BorderLayout.CENTER);
+        pnMain.add(new JScrollPane(tblAppointment), BorderLayout.CENTER);
 
         // Bottom Panel: Control Buttons
-        JPanel pnBottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        
+        JPanel pnBottom = new JPanel(new FlowLayout());
         btnSelect = new JButton("Select Appointment");
         btnSelect.addActionListener(this);
         pnBottom.add(btnSelect);
+
+        btnWalkin = new JButton("Add Walk-in Client");
+        btnWalkin.addActionListener(this);
+        pnBottom.add(btnWalkin);
 
         btnBack = new JButton("Back");
         btnBack.addActionListener(this);
@@ -95,7 +76,7 @@ public class SearchAppointmentFrm extends JFrame implements ActionListener {
         pnMain.add(pnBottom, BorderLayout.SOUTH);
 
         // Frame configuration
-        this.setSize(650, 450);
+        this.setSize(750, 450);
         this.setLocationRelativeTo(null);
         this.setContentPane(pnMain);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -115,22 +96,27 @@ public class SearchAppointmentFrm extends JFrame implements ActionListener {
 
             DefaultTableModel model = (DefaultTableModel) tblAppointment.getModel();
             model.setRowCount(0);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
 
             for (Appointment app : listApp) {
-                model.addRow(new Object[]{
-                    app.getId(),
-                    app.getClient().getName(),
-                    app.getClient().getPhone(),
-                    app.getAppointmenDate() != null ? sdf.format(app.getAppointmenDate()) : "N/A"
+                String tsInfo = "None";
+                if (app.getTimeSlot() != null) {
+                    tsInfo = app.getTimeSlot().getStartTime() + " - " + app.getTimeSlot().getEndTime() + " (" + app.getTimeSlot().getDescription() + ")";
+                }
+                model.addRow(new Object[] {
+                        app.getId(),
+                        app.getClient().getName(),
+                        app.getClient().getPhone(),
+                        app.getAppointmenDate() != null ? sdfDate.format(app.getAppointmenDate()) : "N/A",
+                        tsInfo,
+                        app.getSlot() != null ? app.getSlot().getName() : "None"
                 });
             }
 
             if (listApp.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No appointment found matching that name.");
+                JOptionPane.showMessageDialog(this, "No appointment found.");
             }
-        } 
-        else if (e.getSource().equals(btnSelect)) {
+        } else if (e.getSource().equals(btnSelect)) {
             int selectedRow = tblAppointment.getSelectedRow();
             if (selectedRow < 0) {
                 JOptionPane.showMessageDialog(this, "Please select an appointment from the table.");
@@ -138,15 +124,15 @@ public class SearchAppointmentFrm extends JFrame implements ActionListener {
             }
 
             Appointment selectedApp = listApp.get(selectedRow);
-            // Load detail lists (services and materials) using DAO
             AppointmentDAO ad = new AppointmentDAO();
             selectedApp = ad.getAppointmentDetail(selectedApp);
 
-            // Navigate to SearchItemFrm with loaded details
             new SearchItemFrm(u, selectedApp).setVisible(true);
             this.dispose();
-        } 
-        else if (e.getSource().equals(btnBack)) {
+        } else if (e.getSource().equals(btnWalkin)) {
+            new AddClient(u).setVisible(true);
+            this.dispose();
+        } else if (e.getSource().equals(btnBack)) {
             new ReceptionistHomeFrm(u).setVisible(true);
             this.dispose();
         }
