@@ -16,7 +16,7 @@ public class Appointment implements Serializable{
     public Appointment(){
         super();
     }
-
+    
     public Appointment(int id, boolean status, Date appointmenDate, User user, Client client,
                        ArrayList<AppointmentService> appointmentService,
                        ArrayList<AppointmentMaterial> appointmentMaterial) {
