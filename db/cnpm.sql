@@ -1,0 +1,76 @@
+-- use cnpm;
+--
+-- create table if not exists tblUser(
+-- 	id int primary key,
+--     name varchar(20) not null,
+--     username varchar(20),
+-- 	password varchar(20),
+--     position varchar(50)
+-- );
+-- create table if not exists tblClient(
+-- 	id int auto_increment primary key,
+--     name varchar(20) not null,
+--     phone varchar(20),
+--     address varchar(255)
+-- );
+-- create table if not exists tblStaff(
+-- 	id int auto_increment primary key,
+--     name varchar(50) not null,
+--     phone varchar(20),
+--     email varchar(20),
+--     status varchar(10)
+-- );
+-- create table if not exists tblService(
+-- 	id int auto_increment primary key,
+--     name varchar(100) not null,
+--     unitPrice DOUBLE not null,
+--     category varchar(50),
+--     description TEXT
+-- );
+-- create table if not exists tblServiceStaff(
+-- 	id int auto_increment primary key,
+--     staff_id int not null,
+--     service_id int not null,
+--     specialization varchar(100),
+--     foreign key (staff_id) references tblService(id)
+-- );
+
+-- create table if not exists tblMaterial(
+-- 	id int auto_increment primary key,
+--     name varchar(100) not null,
+--     unitPrice DOUBLE not null,
+--     category varchar(50),
+--     description TEXT
+-- );
+-- create table if not exists tblAppointment(
+-- 	id int auto_increment primary key,
+--     status boolean default false,
+--     appointmentTime DATETIME not null,
+--     user_id int,
+--     client_id int,
+--     foreign key (client_id) references tblClient(id),
+--     foreign key (user_id) references tblUser(id)
+-- );
+
+-- -- Table Appointment - Service
+-- create table if not exists tblAppointmentService(
+-- 	id int auto_increment primary key,
+--     appointment_id int not null,
+--     service_id int not null,
+--     staff_id int not null,
+--     quantity int not null,
+--     price double not null,
+--     foreign key (appointment_id) references tblAppointment(id),
+--     foreign key (service_id) references tblService(id),
+--     foreign key (staff_id) references tblStaff(id)
+-- );
+-- -- Table Appointment - Material
+-- create table if not exists tblAppointmentMaterial(
+-- 	id int auto_increment primary key,
+--     appointment_id int not null,
+--     material_id int not null,
+--     quantity int not null,
+--     price double not null,
+--     foreign key (appointment_id) references tblAppointment(id),
+--     foreign key (material_id) references tblMaterial(id)
+-- )
