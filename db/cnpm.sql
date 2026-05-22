@@ -92,33 +92,37 @@ INSERT INTO tblClient (id, name, phone, address) VALUES
 (3, 'Le Van C', '0903334445', 'Da Nang'),
 (4, 'Pham Minh D', '0977888999', 'Hai Phong');
 
--- 3. Insert seed data into tblStaff (Service Staff, e.g., Doctors, Technicians, Nurses)
+-- 3. Insert seed data into tblStaff (Spa Therapists / Estheticians)
 INSERT INTO tblStaff (id, name, phone, email, status) VALUES
-(1, 'Dr. Nguyen Anh Tu', '0944445555', 'tuna@clinic.com', 'active'),
-(2, 'Dr. Pham Thanh Ha', '0955556666', 'hapt@clinic.com', 'active'),
-(3, 'Nurse Le Minh', '0966667777', 'minhl@clinic.com', 'active');
+(1, 'Therapist Nguyen Anh Tu', '0944445555', 'tuan@spaluxury.com', 'free'),
+(2, 'Esthetician Pham Thanh Ha', '0955556666', 'haha@spaluxury.com', 'free'),
+(3, 'Therapist Le Minh', '0966667777', 'minhl@spaluxury.com', 'free');
 
--- 4. Insert seed data into tblService
+-- 4. Insert seed data into tblService (Spa Treatments & Therapies)
 INSERT INTO tblService (id, name, unitPrice, category, description) VALUES
-(1, 'General Health Checkup', 150000, 'Consultation', 'Standard comprehensive general physical examination'),
-(2, 'Dental Scaling & Polishing', 300000, 'Dentistry', 'Deep dental cleaning, scaling, and polishing'),
-(3, 'Blood Test Analysis', 200000, 'Laboratory', 'Complete Blood Count (CBC) and basic biochemical check'),
-(4, 'Chest X-Ray Scanning', 250000, 'Radiology', 'Diagnostic chest or limb X-ray imaging scan');
+(1, 'Swedish Full Body Massage', 450000, 'Massage', 'Relaxing full body massage with warm therapeutic essential oils'),
+(2, 'Organic Hydrating Facial', 350000, 'Facial', 'Deep facial cleansing, gentle organic exfoliation and herbal mask sheet'),
+(3, 'Hot Stone Healing Therapy', 600000, 'Therapy', 'Muscle relief and circulation boost using heated natural basalt stones'),
+(4, 'Aromatherapy Lavender Scrub', 300000, 'Body Care', 'Exfoliating body scrub with pure sea salt and lavender essential oils');
 
--- 5. Insert seed data into tblServiceStaff (Mapping Staff to their Services and specializations)
+-- 5. Insert seed data into tblServiceStaff (Mapping Therapists to their specialties)
 INSERT INTO tblServiceStaff (id, staff_id, service_id, specialization) VALUES
-(1, 1, 1, 'General Physician'),
-(2, 2, 2, 'Dental Surgeon'),
-(3, 3, 3, 'Laboratory Nurse');
+(1, 1, 1, 'Swedish Massage Specialist'),
+(2, 2, 2, 'Organic Skincare Esthetician'),
+(3, 3, 3, 'Hot Stone Therapy Practitioner'),
+(4, 1, 4, 'Aromatherapy Body Care Practitioner'),
+(5, 2, 4, 'Skincare & Exfoliation Expert'),
+(6, 3, 1, 'Swedish Massage Practitioner');
 
--- 6. Insert seed data into tblMaterial (Medical Consumables)
+
+-- 6. Insert seed data into tblMaterial (Spa Consumables / Oils / Skincare Products)
 INSERT INTO tblMaterial (id, name, unitPrice, category, description) VALUES
-(1, 'Sterile Disposable Gloves', 2000, 'Consumables', 'Box of latex single-use examination gloves'),
-(2, 'Disposable Syringe 5ml', 5000, 'Consumables', 'Single-use 5ml sterile syringe with needle'),
-(3, '3-Ply Medical Face Mask', 1000, 'Consumables', 'High filtration protective surgical face mask'),
-(4, 'Sterile Cotton Swab', 500, 'Consumables', 'Pack of double-ended medical cotton buds');
+(1, 'Aromatherapy Lavender Oil', 15000, 'Oils', 'Premium lavender therapeutic essential oil (10ml portion)'),
+(2, 'Organic Facial Mask Pack', 25000, 'Skincare', 'Single-use herbal soothing and hydrating face sheet mask'),
+(3, 'Disposable Spa Bed Sheet', 5000, 'Linen', 'Sanitary single-use non-woven disposable spa massage bed sheet'),
+(4, 'Exfoliating Mineral Sea Salt', 12000, 'Body Care', 'Natural dead sea mineral exfoliating salt scrub (50g portion)');
 
--- 7. Insert seed data into tblAppointment
+-- 7. Insert seed data into tblAppointment (Spa Bookings)
 INSERT INTO tblAppointment (id, status, appointmentTime, user_id, client_id) VALUES
 (1, 'checked in', '2026-10-10 10:30:20', 1, 1),
 (2, 'checked in', '2026-10-10 10:30:20', 1, 1),
@@ -127,12 +131,12 @@ INSERT INTO tblAppointment (id, status, appointmentTime, user_id, client_id) VAL
 
 -- 8. Insert seed data into tblAppointmentService
 INSERT INTO tblAppointmentService (id, appointment_id, service_id, staff_id, quantity, price) VALUES
-(1, 1, 1, 1, 1, 150000),
-(2, 1, 3, 3, 1, 200000),
-(3, 2, 2, 2, 1, 300000);
+(1, 1, 1, 1, 1, 450000),
+(2, 1, 3, 3, 1, 600000),
+(3, 2, 2, 2, 1, 350000);
 
 -- 9. Insert seed data into tblAppointmentMaterial
 INSERT INTO tblAppointmentMaterial (id, appointment_id, material_id, quantity, price) VALUES
-(1, 1, 1, 2, 2000),
-(2, 1, 2, 1, 5000),
-(3, 2, 1, 4, 2000);
+(1, 1, 1, 2, 15000),
+(2, 1, 2, 1, 25000),
+(3, 2, 1, 4, 15000);
