@@ -1,83 +1,91 @@
--- use cnpm;
---
--- create table if not exists tblUser(
--- 	id int primary key,
---     name varchar(20) not null,
---     username varchar(20),
--- 	password varchar(20),
---     position varchar(50)
--- );
--- create table if not exists tblClient(
--- 	id int auto_increment primary key,
---     name varchar(20) not null,
---     phone varchar(20),
---     address varchar(255)
--- );
--- create table if not exists tblStaff(
--- 	id int auto_increment primary key,
---     name varchar(50) not null,
---     phone varchar(20),
---     email varchar(20),
---     status varchar(10)
--- );
--- create table if not exists tblService(
--- 	id int auto_increment primary key,
---     name varchar(100) not null,
---     unitPrice DOUBLE not null,
---     category varchar(50),
---     description TEXT
--- );
--- create table if not exists tblServiceStaff(
--- 	id int auto_increment primary key,
---     staff_id int not null,
---     service_id int not null,
---     specialization varchar(100),
---     foreign key (staff_id) references tblService(id)
--- );
+CREATE DATABASE IF NOT EXISTS cnpm;
+USE cnpm;
 
--- create table if not exists tblMaterial(
--- 	id int auto_increment primary key,
---     name varchar(100) not null,
---     unitPrice DOUBLE not null,
---     category varchar(50),
---     description TEXT
--- );
--- create table if not exists tblAppointment(
--- 	id int auto_increment primary key,
---     status boolean default false,
---     appointmentTime DATETIME not null,
---     user_id int,
---     client_id int,
---     foreign key (client_id) references tblClient(id),
---     foreign key (user_id) references tblUser(id)
--- );
+CREATE TABLE IF NOT EXISTS tblUser(
+    id INT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+    username VARCHAR(20),
+    password VARCHAR(20),
+    position VARCHAR(50)
+);
 
--- -- Table Appointment - Service
--- create table if not exists tblAppointmentService(
--- 	id int auto_increment primary key,
---     appointment_id int not null,
---     service_id int not null,
---     staff_id int not null,
---     quantity int not null,
---     price double not null,
---     foreign key (appointment_id) references tblAppointment(id),
---     foreign key (service_id) references tblService(id),
---     foreign key (staff_id) references tblStaff(id)
--- );
+CREATE TABLE IF NOT EXISTS tblClient(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+    phone VARCHAR(20),
+    address VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS tblStaff(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(20),
+    status VARCHAR(10)
+);
+
+CREATE TABLE IF NOT EXISTS tblService(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    unitPrice DOUBLE NOT NULL,
+    category VARCHAR(50),
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS tblServiceStaff(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    staff_id INT NOT NULL,
+    service_id INT NOT NULL,
+    specialization VARCHAR(100),
+    FOREIGN KEY (staff_id) REFERENCES tblStaff(id),
+    FOREIGN KEY (service_id) REFERENCES tblService(id)
+);
+
+CREATE TABLE IF NOT EXISTS tblMaterial(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    unitPrice DOUBLE NOT NULL,
+    category VARCHAR(50),
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS tblAppointment(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    status VARCHAR(10) DEFAULT 'pending',
+    appointmentTime DATETIME NOT NULL,
+    user_id INT,
+    client_id INT,
+    FOREIGN KEY (client_id) REFERENCES tblClient(id),
+    FOREIGN KEY (user_id) REFERENCES tblUser(id)
+);
+
+-- Table Appointment - Service
+CREATE TABLE IF NOT EXISTS tblAppointmentService(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    service_id INT NOT NULL,
+    staff_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DOUBLE NOT NULL,
+    FOREIGN KEY (appointment_id) REFERENCES tblAppointment(id),
+    FOREIGN KEY (service_id) REFERENCES tblService(id),
+    FOREIGN KEY (staff_id) REFERENCES tblStaff(id)
+);
+
 -- Table Appointment - Material
--- create table if not exists tblAppointmentMaterial(
--- 	id int auto_increment primary key,
---     appointment_id int not null,
---     material_id int not null,
---     quantity int not null,
---     price double not null,
---     foreign key (appointment_id) references tblAppointment(id),
---     foreign key (material_id) references tblMaterial(id)
--- );
+CREATE TABLE IF NOT EXISTS tblAppointmentMaterial(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    material_id int not null,
+    quantity int not null,
+    price double not null,
+    foreign key (appointment_id) references tblAppointment(id),
+    foreign key (material_id) references tblMaterial(id)
+);
 
--- =========================================================================
--- INSERT SEED DATA FOR ALL TABLES
--- =========================================================================
+=========================================================================
+INSERT SEED DATA FOR ALL TABLES
+=========================================================================
 
 -- 1. Insert seed data into tblUser (Receptionists and Managers)
 INSERT INTO tblUser (id, name, username, password, position) VALUES
